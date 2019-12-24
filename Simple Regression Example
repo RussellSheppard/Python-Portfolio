@@ -1,0 +1,70 @@
+#Python Practice Simple Regression
+#We have 12 observations on 2 variables. We try to estimate the Sales (CRS) using:
+#Input Variables:
+#1. Spend
+#Output Variable:
+#2. Sales
+
+#Load Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+
+df = pd.read_excel('./mktgbudget.xlsx', sheet_name='mktgbudget')
+df.head()
+
+#Create new Dataset without the Months column
+df1 = df.drop('Month', axis=1)
+df1.head()
+
+#Show key statstics
+df1.describe()
+
+#Define x variable
+x=df1['Spend'].values
+y=df1['Sales'].values
+
+#Load Library for Training dataset
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=100)
+
+#Change Data to 2D array
+x_train2 = x_train.reshape(-1,1)
+x_test2 = x_test.reshape(-1,1)
+y_train2 = y_train.reshape(-1,1)
+y_test2 = y_test.reshape(-1,1)
+
+#Visualization of the data
+lmgraph=sns.regplot(x=x,y=y)
+lmgraph.axes.set_title("Spend vs Sales",size=20,color='blue',alpha=0.5)
+lmgraph.set_xlabel("Spend",size=18,color='blue',alpha=0.5)
+lmgraph.set_ylabel("Sales",size=18,color='blue',alpha=0.5)
+
+#Script for Linear Regression
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+
+for name,method in [('Linear Regression', LinearRegression())]: 
+    method.fit(x_train2,y_train2)
+    predict = method.predict(x_test2)
+
+print('Method: {}'.format(name))   
+
+#Coefficents
+print('\nIntercept: {:0.2f}'.format(float(method.intercept_)))
+print('Coefficient: {:0.2f}'.format((float(method.coef_))))
+    
+#MAE,MSE and RMSE
+print('\nR2: {:0.2f}'.format(metrics.r2_score(y_test, predict)))
+print('Mean Absolute Error: {:0.2f}'.format(metrics.mean_absolute_error(y_test, predict)))  
+print('Mean Squared Error: {:0.2f}'.format(metrics.mean_squared_error(y_test, predict)))  
+print('Root Mean Squared Error: {:0.2f}'.format(np.sqrt(metrics.mean_squared_error(y_test, predict))))
+
+#Forecast Table
+predict2 = predict.reshape(-1)
+diff = predict2-y_test
+FcstTble=pd.DataFrame({'Actual':y_test,'Predicted':predict2.round(2),'Difference':diff.round(2)})
+print('\nForecast Table')
+FcstTble
