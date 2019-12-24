@@ -34,6 +34,6 @@ plt.xlabel('Name')
 plt.ylabel('Score')
 
 #Legend
-#bbox to anchor gives a great amount of control for manuel legend placement.
+#bbox to anchor gives a great amount of control for manual legend placement.
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2)
 plt.show()
