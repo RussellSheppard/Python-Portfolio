@@ -1,0 +1,39 @@
+# importing necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#load dataset
+dataset = pd.read_csv('./iris.csv')
+dataset.head()
+
+#Data Types
+#A float is a number with a decimal, an integer is a whole number. An "object" is information that has no numerical value.
+dataset.dtypes
+
+#Create x and y variables
+x = dataset.drop('species', axis=1).values
+y = dataset['species'].values
+
+#Training Set
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.2,stratify=y,random_state = 100) 
+
+#Scale the Data
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train2 = sc.fit_transform(x_train)
+x_test2 = sc.fit_transform(x_test)
+
+#Script for Naive Bayes
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import classification_report, confusion_matrix  
+
+for name,method in [('Naive Bayes - GB',GaussianNB())]: 
+    method.fit(x_train2,y_train)
+    predict = method.predict(x_test2)
+    target_names=['setosa','versicolor','virginica']
+    print('\nEstimator: {}'.format(name)) 
+    print('\n',confusion_matrix(y_test,predict))  
+    print(classification_report(y_test,predict,target_names=target_names))  
