@@ -1,0 +1,69 @@
+#A data frame with 32 observations on 11 (numeric) variables.
+#model Car Model Type
+#mpg Miles/(US) gallon
+#cyl Number of cylinders
+#disp Displacement (cu.in.)
+#hp Gross horsepower
+#drat Rear axle ratio
+#wt Weight (1000 lbs)
+#qsec 1/4 mile time
+#vs Engine (0 = V-shaped, 1 = straight)
+#am Transmission (0 = automatic, 1 = manual)
+#gear Number of forward gears
+#carb Number of carburetors
+
+#Load Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#Load Dataset
+data=pd.read_csv('./mtcars.csv')
+data.head()
+
+#Show Key Statistics
+data2=data.drop('model',axis=1)
+data2.describe()
+
+#Define x and y variable
+x = data2.drop('mpg',axis=1).values
+y = data2['mpg'].values
+
+#Load Library for Training Dataset
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=100)
+
+#Scale the Data
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train2 = sc.fit_transform(x_train)
+x_test2 = sc.fit_transform(x_test)
+#Script for Linear Regression
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics  
+
+for name,method in [('Linear Regression', LinearRegression())]: 
+    method.fit(x_train2,y_train)
+    predict = method.predict(x_test2)
+
+print('Method: {}'.format(name))   
+
+#Coefficents
+print('\nIntercept: {:0.2f}'.format(float(method.intercept_)))
+coeff_table=pd.DataFrame(np.transpose(method.coef_),data2.drop('mpg',axis=1).columns,columns=['Coefficients'])
+print('\n')
+print(coeff_table)
+    
+#MAE,MSE and RMSE
+print('\nR2: {:0.2f}'.format(metrics.r2_score(y_test, predict)))
+print('Mean Absolute Error: {:0.2f}'.format(metrics.mean_absolute_error(y_test, predict)))  
+print('Mean Squared Error: {:0.2f}'.format(metrics.mean_squared_error(y_test, predict)))  
+print('Root Mean Squared Error: {:0.2f}'.format(np.sqrt(metrics.mean_squared_error(y_test, predict))))
+
+#Forecast Table
+predict2 = predict.T
+diff = predict2-y_test
+FcstTble=pd.DataFrame({'Actual':y_test,'Predicted':predict2.round(1),'Difference':diff.round(1)})
+print('\nForecast Table')
+FcstTble.head()
