@@ -1,0 +1,51 @@
+#Load Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+# Read dataset to pandas dataframe
+irisdata = pd.read_csv('./iris.csv')
+irisdata.head()
+
+#Identify how many classes we have
+irisdata.species.unique()
+
+# Assign data from first four columns to X variable
+X = irisdata.drop('species',axis=1).values
+y = irisdata['species'].values
+
+#Train the Data
+from sklearn.model_selection import train_test_split  
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y,test_size = 0.20,random_state=100)
+
+#Scale the data
+from sklearn.preprocessing import StandardScaler  
+scaler = StandardScaler()  
+scaler.fit(X_train)
+
+X_train = scaler.transform(X_train)  
+X_test = scaler.transform(X_test)
+
+#Neural Network
+from sklearn.neural_network import MLPClassifier  
+mlp = MLPClassifier(hidden_layer_sizes=(4, 4, 3), max_iter=10000,random_state=100)  
+mlp.fit(X_train, y_train) 
+predictions = mlp.predict(X_test) 
+
+#Evaluate the Neural Network Algorithum
+from sklearn.metrics import classification_report, confusion_matrix  
+target_names=['setosa','versicolor','virginica']
+print(confusion_matrix(y_test,predictions))  
+print(classification_report(y_test,predictions,target_names=target_names))
+
+#Script for Decision Tree
+from sklearn.tree import DecisionTreeClassifier  
+
+for name,method in [('DT', DecisionTreeClassifier(random_state=100))]: 
+    method.fit(X_train,y_train)
+    predict = method.predict(X_test)
+    target_names=['setosa','versicolor','virginica']
+    print('\nEstimator: {}'.format(name)) 
+    print(confusion_matrix(y_test,predict))  
+    print(classification_report(y_test,predict,target_names=target_names))   
