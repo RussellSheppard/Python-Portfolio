@@ -1,0 +1,19 @@
+# Load Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+df = pd.read_excel('./BlueJaysThreeMonthScores.xlsx', sheet_name='Sheet1')
+df.head()
+
+#The mean(as in statistics), of the Blue Jay's Score
+df['Blue Jays Score'].mean()
+
+#The median(as in statistics), of the Blue Jay's Score
+df['Blue Jays Score'].median()
+
+#The Standard Deviation(as in statistics), of the Blue Jay's Score
+df['Blue Jays Score'].std()
+
+#Counts of Outcome
+df['Outcome'].value_counts()
