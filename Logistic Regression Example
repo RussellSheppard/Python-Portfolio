@@ -1,0 +1,47 @@
+#Load Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+#Load Dataset
+Diabetes=pd.read_csv('./diabetes.csv')
+Diabetes.head()
+
+#Show Key Statistics
+Diabetes.describe()
+
+#Define x and y variable
+x = Diabetes.drop('Outcome',axis=1).values
+y = Diabetes['Outcome'].values
+
+#Load Library for Training dataset
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,stratify=y,random_state=100)
+
+#Scale the Data
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x_train2 = sc.fit_transform(x_train)
+x_test2 = sc.fit_transform(x_test)
+#Script for Linear Regression
+from sklearn.linear_model import LogisticRegression
+
+for name,method in [('Logistic Regression', LogisticRegression(solver='liblinear',random_state=100))]: 
+    method.fit(x_train2,y_train)
+    predict = method.predict(x_test2)
+
+print('Method: {}'.format(name))   
+
+#Coefficents
+print('\nIntercept: {:0.2f}'.format(float(method.intercept_)))
+coeff_table=pd.DataFrame(np.transpose(method.coef_),Diabetes.drop('Outcome',axis=1).columns,
+                         columns=['Coefficients'])
+print('\n')
+print(coeff_table)
+
+#Evaluate the Algorithum
+from sklearn.metrics import classification_report, confusion_matrix  
+target_names=['Class 0','Class 1']
+print(confusion_matrix(y_test,predict))  
+print(classification_report(y_test,predict,target_names=target_names))
+
