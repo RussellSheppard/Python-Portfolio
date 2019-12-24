@@ -1,0 +1,50 @@
+#Load Libraries
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#Load KMeans Fuction
+from sklearn.cluster import KMeans
+
+#Create Dataset
+X= np.array([[5,3],
+           [10,15],
+           [24,10],
+           [30,45],
+           [85,70],
+           [71,80],
+           [60,78],
+           [55,52],
+           [80,91],])
+           
+#Simple Scatter Plot of Dataset
+plt.scatter(X[:,0],X[:,1], label='True Position')
+
+#Set number of clusters
+kmeans = KMeans(n_clusters=2) 
+
+#Create Kmeans Model
+kmeans.fit(X)
+
+#Print Cluster Centers
+print(kmeans.cluster_centers_)  
+
+#Print Labels
+print(kmeans.labels_)
+
+#Scatter plot of clusters
+plt.scatter(X[:,0],X[:,1], c=kmeans.labels_, cmap='rainbow')
+
+#Change Clusters to 3
+kmeans2 = KMeans(n_clusters=3)
+
+#Fit new Kmeans with 3 clusters
+kmeans2.fit(X)
+
+#Simple Scatter Plot of Clusters
+plt.scatter(X[:,0],X[:,1], c=kmeans2.labels_, cmap='rainbow') 
+
+#Scatter Plot of Clusters with Centers
+plt.scatter(X[:,0],X[:,1], c=kmeans2.labels_, cmap='rainbow')  
+plt.scatter(kmeans2.cluster_centers_[:,0] ,kmeans2.cluster_centers_[:,1], color='black')
+
